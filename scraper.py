@@ -17,12 +17,8 @@ keyquest = requests.get(KEY_URL, headers=headers)
 
 soup = BeautifulSoup(keyquest.content, "html.parser")
 
-#print(soup.prettify())
-
 classWoodingham = "hdp__sc-reo5z7-1 jdeidP"
 classOtherHouse = "hdp__sc-reo5z7-1 jdeidP"
-
-#scrapedPrice = soup.find(id="gpt-ad-801499d4-80b9-4d0b-a056-6ffbd0b01b2b-config")
 
 price = soup.find(id="ProductPrice-4141030539324")
 price2 = soup.find('span', class_="money").get_text()
