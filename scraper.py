@@ -2,8 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 
-#import html5lib
-
 # zillow, realtor.com, and redfin all block scrapers from looking into their site's html content
 # probably because they want ad revenue
 
@@ -70,6 +68,5 @@ print(f"Dollar cost of arduino: ${costTag.string}")
 
 # maybe add datetime to auto email/text
 # make sure to only send email/text when the price is below our threshold
-
 
 
