@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 
-import html5lib
+#import html5lib
 
 # zillow, realtor.com, and redfin all block scrapers from looking into their site's html content
 # probably because they want ad revenue
@@ -48,8 +48,10 @@ print(price2)
 # our url we want to scrape
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
 
+neweggURLArray = ["https://www.newegg.com/arduino-a000066/p/N82E16813450001"]
+
 # the request to get the webpage's HTML content
-neweggReq = requests.get(neweggURL, headers=headers)
+neweggReq = requests.get(neweggURLArray[0], headers=headers)
 
 # using bs4 to parse the html content
 soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
