@@ -4,6 +4,13 @@ import datetime
 
 import html5lib
 
+# zillow, realtor.com, and redfin all block scrapers from looking into their site's html content
+# probably because they want ad revenue
+
+# I want to eventually have command line arguments for adding urls to a list of urls and then being able to scrape a particular page for an item's 
+# price based on command line input. So long as the HTML structure is consistent, this should work just fine
+# finally, we can send an email or text (using Twilio) to our end user when we find a price below the lower bound they enter into the command line
+
 
 URL = "https://www.zillow.com/homedetails/15922-Woodingham-Dr-Detroit-MI-48238/88348158_zpid/"
 KEY_URL = "https://iqunix.store/collections/f96/products/f96-coral-sea-wireless-mechanical-keyboard"
