@@ -10,6 +10,7 @@ import html5lib
 # I want to eventually have command line arguments for adding urls to a list of urls and then being able to scrape a particular page for an item's 
 # price based on command line input. So long as the HTML structure is consistent, this should work just fine
 # finally, we can send an email or text (using Twilio) to our end user when we find a price below the lower bound they enter into the command line
+# hi lindsay
 
 
 URL = "https://www.zillow.com/homedetails/15922-Woodingham-Dr-Detroit-MI-48238/88348158_zpid/"
