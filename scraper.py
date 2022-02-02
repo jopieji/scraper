@@ -11,15 +11,15 @@ import datetime
 # hi lindsay
 
 
-URL = "https://www.zillow.com/homedetails/15922-Woodingham-Dr-Detroit-MI-48238/88348158_zpid/"
+#URL = "https://www.zillow.com/homedetails/15922-Woodingham-Dr-Detroit-MI-48238/88348158_zpid/"
 KEY_URL = "https://iqunix.store/collections/f96/products/f96-coral-sea-wireless-mechanical-keyboard"
-pelosi = "https://tradytics.com/senate-individual"
+#pelosi = "https://tradytics.com/senate-individual"
 
 SAF_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
 EDGE_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.43'
 
 headers = {"user-agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15'}
-
+"""
 page_data = requests.get(URL, headers=headers)
 keyquest = requests.get(KEY_URL, headers=headers)
 housereq = requests.get(pelosi, headers=headers)
@@ -40,33 +40,76 @@ price2 = soup.find('span', class_="money").get_text()
 
 #print(scrapedPrice)
 print(price2)
-
+"""
 ### alternate, more simple solution
 # checking arduino prices
 # our url we want to scrape
+
+# initialize while loop conditions
+noExit = True
+app = False
+
+# base test URL
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
 
+# array of URLs
 neweggURLArray = ["https://www.newegg.com/arduino-a000066/p/N82E16813450001"]
 
-# the request to get the webpage's HTML content
-neweggReq = requests.get(neweggURLArray[0], headers=headers)
+def prompt():
+    runAppDetect = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) exit\n"))
+    return runAppDetect
 
-# using bs4 to parse the html content
-soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
 
-# finding any dollar signs in the html (the first dollar sign more specifically)
-findDollar = soupNewegg.find_all(text="$")
+# might want to change this to a function so we can do more than 1 action in a single run
+# works fine but kinda off code.
+while noExit:
+    val = prompt()
+    if val == 1:
+            app = True
+    elif val == 2:
+        urlToEnter = input("Pase in your url: ")
+    elif val == 3:
+        # TODO: "Add the logic here to print urls and delete by index"
+        break
+    elif val == 4:
+        # TODO: "Similar logic to above, but able to change the limit price for notifications"
+        break
+    elif val == 5:
+        noExit = False
+        break
+    while app:
+        # TODO: Add logic to choose what element we want to scrape for, or add logic to scrape every val in neweggURLArray
+        # the request to get the webpage's HTML content
+        neweggReq = requests.get(neweggURLArray[0], headers=headers)
+        # using bs4 to parse the html content
+        soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
+        # finding any dollar signs in the html (the first dollar sign more specifically)
+        findDollar = soupNewegg.find_all(text="$")
+        # find the parent div of the first dollar sign (usually the title dollar sign/price we see most prominently)
+        costParent = findDollar[0].parent
+        # picking out the text from the element we want to, in this case 'strong'
+        costTag = costParent.find("strong")
+        # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
+        print(f"Dollar cost of arduino: ${costTag.string}")
+        app = False
 
-# find the parent div of the first dollar sign (usually the title dollar sign/price we see most prominently)
-costParent = findDollar[0].parent
-
-# picking out the text from the element we want to, in this case 'strong'
-costTag = costParent.find("strong")
-
-# just printing the cost for now when we run the script
-print(f"Dollar cost of arduino: ${costTag.string}")
 
 # maybe add datetime to auto email/text
 # make sure to only send email/text when the price is below our threshold
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
