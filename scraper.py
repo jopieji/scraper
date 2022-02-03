@@ -53,7 +53,7 @@ app = False
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
 
 # array of URLs
-neweggURLArray = ["https://www.newegg.com/arduino-a000066/p/N82E16813450001"]
+neweggURLArray = ["https://www.newegg.com/arduino-a000066/p/N82E16813450001", "https://www.newegg.com/g-skill-16gb-288-pin-ddr4-sdram/p/N82E16820231941"]
 
 def prompt():
     runAppDetect = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) exit\n"))
@@ -68,6 +68,9 @@ while noExit:
             app = True
     elif val == 2:
         urlToEnter = input("Pase in your url: ")
+        # can i add a tester to make sure its a valid URL? Maybe use regex, or just check the first 'x' characters to be https://www.newegg.com/""
+        neweggURLArray.append(urlToEnter)
+        # this doesn't add permanently. need to use a txt or CSV file maybe
     elif val == 3:
         # TODO: "Add the logic here to print urls and delete by index"
         break
@@ -79,8 +82,10 @@ while noExit:
         break
     while app:
         # TODO: Add logic to choose what element we want to scrape for, or add logic to scrape every val in neweggURLArray
-        # the request to get the webpage's HTML content
-        neweggReq = requests.get(neweggURLArray[0], headers=headers)
+        urlIndex = int(input("What URL would you like to scrape?\n")) - 1
+        # TODO: Add print urls function (with numbers )
+        # the request to get the webpage's HTML content        
+        neweggReq = requests.get(neweggURLArray[urlIndex], headers=headers)
         # using bs4 to parse the html content
         soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
         # finding any dollar signs in the html (the first dollar sign more specifically)
@@ -90,7 +95,7 @@ while noExit:
         # picking out the text from the element we want to, in this case 'strong'
         costTag = costParent.find("strong")
         # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
-        print(f"Dollar cost of arduino: ${costTag.string}")
+        print(f"Dollar cost of ADD ITEM NAME HERE: ${costTag.string}")
         app = False
 
 
