@@ -53,7 +53,18 @@ app = False
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
 
 # array of URLs
-neweggURLArray = ["https://www.newegg.com/arduino-a000066/p/N82E16813450001", "https://www.newegg.com/g-skill-16gb-288-pin-ddr4-sdram/p/N82E16820231941"]
+neweggURLArray = [
+"https://www.newegg.com/arduino-a000066/p/N82E16813450001", 
+"https://www.newegg.com/g-skill-16gb-288-pin-ddr4-sdram/p/N82E16820231941",
+"https://www.newegg.com/p/2S7-01JX-00003"
+]
+
+# dict of item names for print statement 
+urlItemNameDict = {
+    0: "Arduino Base Unit",
+    1: "G-Skill RAM 16 GB",
+    2: "Arduino Mechanical Arm",
+}
 
 def prompt():
     runAppDetect = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) exit\n"))
@@ -95,7 +106,7 @@ while noExit:
         # picking out the text from the element we want to, in this case 'strong'
         costTag = costParent.find("strong")
         # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
-        print(f"Dollar cost of ADD ITEM NAME HERE: ${costTag.string}")
+        print(f"Dollar cost of {urlItemNameDict.get(urlIndex)}: ${costTag.string}")
         app = False
 
 
