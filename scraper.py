@@ -22,12 +22,15 @@ headers = {"user-agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleW
 
 # initialize while loop conditions
 noExit = True
-app = False
+scrape = False
 
 # base test URL
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
 
 # array of URLs
+# TODO: Maybe make this into a dictionary
+# have the indicies be the keys, then have a list of the name and URL as the values
+# TODO: Use input checking to make sure the URLs are from Newegg
 neweggURLArray = [
 "https://www.newegg.com/arduino-a000066/p/N82E16813450001", 
 "https://www.newegg.com/g-skill-16gb-288-pin-ddr4-sdram/p/N82E16820231941",
@@ -44,7 +47,7 @@ urlItemNameDict = {
 }
 
 def prompt():
-    appOption = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) exit\n"))
+    appOption = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) exit\n(6) View Current URLs\n\n"))
     return appOption
 
 # pickle object storage for url array
@@ -53,23 +56,32 @@ def pickleDataAdd(toStore):
     with open("urlArr.pickle", "wb") as f:
         pickle.dump(toStore, f) 
 
+# retrieves pickled array data to print options to choose from
 def pickleDataRetreive():
     with open("urlArr.pickle", "rb") as f:
         arr_toPrint = pickle.load(f)
     return arr_toPrint
 
+# function that prints the urls in a neat format
+# might need alter this to handle dictionary data so the URLs can be named by the end user
+def printUrls():
+    for i, url in enumerate(pickleDataRetreive()):
+        print(f"{i + 1}: {url}")
+    
+
 # might want to change this to a function so we can do more than 1 action in a single run
 # works fine but kinda off code.
 while noExit:
+    pickleDataAdd(neweggURLArray)
     switch = prompt()
     if switch == 1:
-            app = True
+            scrape = True
     elif switch == 2:
         urlToEnter = input("Paste in your url: ")
         # can i add a tester to make sure its a valid URL? Maybe use regex, or just check the first 'x' characters to be https://www.newegg.com/""
         neweggURLArray.append(urlToEnter)
         # using pickle to store the new array
-        pickleData(neweggURLArray)
+        pickleDataAdd(neweggURLArray)
         print("URL sucessfully added!")
     elif switch == 3:
         # TODO: "Add the logic here to print urls and delete by index"
@@ -80,10 +92,13 @@ while noExit:
     elif switch == 5:
         noExit = False
         break
-    while app:
-        # TODO: Add logic to choose what element we want to scrape for, or add logic to scrape every val in neweggURLArray
+    elif switch == 6:
+        printUrls()
+    # TODO: Maybe make this into a function that is called when (1) selected
+    while scrape:
+        # TODO: Add logic to scrape all elements in sequence
         urlIndex = int(input("What URL would you like to scrape?\n")) - 1
-        # TODO: Add print urls function (with numbers )
+        # TODO: Add print urls function (with numbers)
         # the request to get the webpage's HTML content        
         neweggReq = requests.get(neweggURLArray[urlIndex], headers=headers)
         # using bs4 to parse the html content
@@ -95,8 +110,8 @@ while noExit:
         # picking out the text from the element we want to, in this case 'strong'
         costTag = costParent.find("strong")
         # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
-        print(f"Dollar cost of {urlItemNameDict.get(urlIndex)}: ${costTag.string}")
-        app = False
+        print(f"\nDollar cost of {urlItemNameDict.get(urlIndex)}: ${costTag.string}")
+        scrape = False
 
 
 # maybe add datetime to auto email/text
