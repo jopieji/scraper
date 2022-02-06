@@ -61,6 +61,35 @@ def prompt():
     appOption = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) View Current URLs\n(6) Exit\n\n"))
     return appOption
 
+# pickle object storage for url dict
+def pickleDictDataAdd(dataToStore):
+    with open("urlDict.pickle", "wb") as f:
+        pickle.dump(sampleurlItemNameDict, f)
+
+# function to add items to data dict
+def addDictItem():
+    index = len(sampleurlItemNameDict.keys())
+    listToAdd = []
+    url = input("Enter a URL to add:\n")
+    name = input("What is the item called?\n")
+    limitPrice = input("What is the limit price you want scrape for?\n")
+    listToAdd.append(url)
+    listToAdd.append(name)
+    listToAdd.append(limitPrice)
+    sampleurlItemNameDict.update({index: listToAdd})
+    # might be inefficient
+    pickleDictDataAdd(sampleurlItemNameDict)
+
+# retreive pickled dict data to print options to choose from and retrieve urls
+# no need for this right now; wasn't working to print
+# might work now if I use correct looping syntax for dictionary
+"""
+def pickleDictDataRetrieve():
+    with open("urlDict.pickle", "rb") as f:
+        dict_data = pickle.load(f)
+    return dict_data
+"""
+
 # pickle object storage for url array
 # maintains edits after user inputs and deletes items
 def pickleDataAdd(toStore):
@@ -76,14 +105,25 @@ def pickleDataRetreive():
 # function that prints the urls in a neat format
 # might need alter this to handle dictionary data so the URLs can be named by the end user; also include limit prices for each item
 def printUrls():
-    for i, url in enumerate(pickleDataRetreive()):
-        print(f"{i + 1}: {url}")
+    for k, v in sampleurlItemNameDict.items():
+        print(f"{k + 1}: {v[1]} Price: {v[2]}")
+
+def updateLocalDict():
+    with open("urlDict.pickle", "rb") as f:
+        x = pickle.load(f)
+    sampleurlItemNameDict.update(x)
+
+
+# function to print dict
+def printInfo():
+    pass
+    #print(f"Item at {k + 1}: {v[1]}\t Current Limit Price: ${v[2]}")
     
 
 # might want to change this to a function so we can do more than 1 action in a single run
 # works fine but kinda off code.
 while noExit:
-    pickleDataAdd(neweggURLArray)
+    pickleDictDataAdd(sampleurlItemNameDict)
     switch = prompt()
     if switch == 1:
             scrape = True
