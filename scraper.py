@@ -68,14 +68,14 @@ def pickleDictDataAdd(dataToStore):
 
 # function to add items to data dict
 def addDictItem():
-    index = len(sampleurlItemNameDict.keys())
+    index = len(pickleDictDataRetrieve().keys())
     listToAdd = []
     url = input("Enter a URL to add:\n")
     name = input("What is the item called?\n")
     limitPrice = input("What is the limit price you want scrape for?\n")
     listToAdd.append(url)
     listToAdd.append(name)
-    listToAdd.append(limitPrice)
+    listToAdd.append(int(limitPrice))
     sampleurlItemNameDict.update({index: listToAdd})
     # might be inefficient
     pickleDictDataAdd(sampleurlItemNameDict)
@@ -83,12 +83,10 @@ def addDictItem():
 # retreive pickled dict data to print options to choose from and retrieve urls
 # no need for this right now; wasn't working to print
 # might work now if I use correct looping syntax for dictionary
-"""
 def pickleDictDataRetrieve():
     with open("urlDict.pickle", "rb") as f:
-        dict_data = pickle.load(f)
-    return dict_data
-"""
+        return pickle.load(f)
+    
 
 # pickle object storage for url array
 # maintains edits after user inputs and deletes items
@@ -108,40 +106,42 @@ def printUrls():
     for k, v in sampleurlItemNameDict.items():
         print(f"{k + 1}: {v[1]} Price: {v[2]}")
 
+def printUrlsWithPickleObject():
+    for key, val in pickleDictDataRetrieve().items():
+        print(f"{key + 1}: {val[1]} Price: {val[2]}")
+
 def updateLocalDict():
     with open("urlDict.pickle", "rb") as f:
         x = pickle.load(f)
     sampleurlItemNameDict.update(x)
 
+def deleteItem():
+    printUrls()
+    print()
+    keyToRemove = int(input("What item do you want to delete? (use number):\n"))
+    sampleurlItemNameDict.pop(keyToRemove)
+    pickleDictDataAdd(sampleurlItemNameDict)
 
-# function to print dict
-def printInfo():
-    pass
-    #print(f"Item at {k + 1}: {v[1]}\t Current Limit Price: ${v[2]}")
     
 
 # might want to change this to a function so we can do more than 1 action in a single run
 # works fine but kinda off code.
 while noExit:
-    pickleDictDataAdd(sampleurlItemNameDict)
+    #pickleDictDataAdd(sampleurlItemNameDict)
     switch = prompt()
     if switch == 1:
             scrape = True
     elif switch == 2:
-        urlToEnter = input("Paste in your url: ")
-        # can i add a tester to make sure its a valid URL? Maybe use regex, or just check the first 'x' characters to be https://www.newegg.com/""
-        neweggURLArray.append(urlToEnter)
-        # using pickle to store the new array
-        pickleDataAdd(neweggURLArray)
+        addDictItem()
         print("URL sucessfully added!")
     elif switch == 3:
         # TODO: "Add the logic here to print urls and delete by index"
-        break
+        deleteItem()
     elif switch == 4:
         # TODO: "Similar logic to above, but able to change the limit price for notifications"
         break
     elif switch == 5:
-        printUrls()
+        printUrlsWithPickleObject()
     elif switch == 6:
         noExit = False
         break
