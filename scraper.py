@@ -50,6 +50,7 @@ urlItemNameDict = {
     3: "MicroPython Board"
 }
 
+# need to phase this out. use pickle for everything for consistency
 sampleurlItemNameDict = {
     0: ["https://www.newegg.com/arduino-a000066/p/N82E16813450001", "Arduino Base Unit", 25],
     1: ["https://www.newegg.com/g-skill-16gb-288-pin-ddr4-sdram/p/N82E16820231941", "G-Skill RAM 16 GB", 59],
@@ -107,6 +108,7 @@ def printUrls():
         print(f"{k + 1}: {v[1]} Price: {v[2]}")
 
 def printUrlsWithPickleObject():
+    print()
     for key, val in pickleDictDataRetrieve().items():
         print(f"{key + 1}: {val[1]} Price: {val[2]}")
 
@@ -116,11 +118,13 @@ def updateLocalDict():
     sampleurlItemNameDict.update(x)
 
 def deleteItem():
-    printUrls()
+    printUrlsWithPickleObject()
     print()
     keyToRemove = int(input("What item do you want to delete? (use number):\n"))
-    sampleurlItemNameDict.pop(keyToRemove)
-    pickleDictDataAdd(sampleurlItemNameDict)
+    update = pickleDataRetreive()
+    update.pop(keyToRemove - 1)
+    pickleDictDataAdd(update)
+    print("Success! URL Removed")
 
     
 
@@ -169,6 +173,7 @@ while noExit:
         else:
             print("Price above threshold. Check back later!")
         scrape = False
+        print("\n" + "="*55)
 
 
 # maybe add datetime to auto email/text
