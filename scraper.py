@@ -112,7 +112,10 @@ def printUrlsWithPickleObject():
 def deleteItem():
     printUrlsWithPickleObject()
     print()
-    keyToRemove = int(input("What item do you want to delete? (use number):\n"))
+    keyToRemove = int(input("What item do you want to delete? (use number or -1 to escape):\n"))
+    if keyToRemove == -1:
+        print("Deletion aborted.")
+        return
     update = pickleDictDataRetrieve()
     update.pop(keyToRemove - 1)
     pickleDictDataAdd(update)
@@ -178,7 +181,6 @@ while noExit:
         addDictItem()
         print("URL sucessfully added!")
     elif switch == 4:
-        # TODO: "Add the logic here to print urls and delete by index"
         deleteItem()
     elif switch == 5:
         # TODO: "Similar logic to above, but able to change the limit price for notifications"
