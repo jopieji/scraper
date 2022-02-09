@@ -12,7 +12,6 @@ import pickle
 # currently, my focus is making this app more user friendly. I will get a full MVP up before trying to implement a GUI
 
 KEY_URL = "https://iqunix.store/collections/f96/products/f96-coral-sea-wireless-mechanical-keyboard"
-
 """
 SAF_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
 EDGE_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.43'
@@ -58,6 +57,7 @@ sampleurlItemNameDict = {
     3: ["https://www.newegg.com/p/3D0-002J-00045", "MicroPython Board", 15]
 }
 
+
 def prompt():
     appOption = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) View Current URLs\n(6) Exit\n\n"))
     return appOption
@@ -96,11 +96,13 @@ def pickleDataAdd(toStore):
         pickle.dump(toStore, f) 
 
 # retrieves pickled array data to print options to choose from
+# might still need this on line 120
+"""
 def pickleDataRetreive():
     with open("urlArr.pickle", "rb") as f:
         arr_toPrint = pickle.load(f)
     return arr_toPrint
-
+"""
 # function that prints the urls in a neat format
 # might need alter this to handle dictionary data so the URLs can be named by the end user; also include limit prices for each item
 def printUrls():
@@ -112,16 +114,11 @@ def printUrlsWithPickleObject():
     for key, val in pickleDictDataRetrieve().items():
         print(f"{key + 1}: {val[1]} Price: {val[2]}")
 
-def updateLocalDict():
-    with open("urlDict.pickle", "rb") as f:
-        x = pickle.load(f)
-    sampleurlItemNameDict.update(x)
-
 def deleteItem():
     printUrlsWithPickleObject()
     print()
     keyToRemove = int(input("What item do you want to delete? (use number):\n"))
-    update = pickleDataRetreive()
+    update = pickleDictDataRetreive()
     update.pop(keyToRemove - 1)
     pickleDictDataAdd(update)
     print("Success! URL Removed")
@@ -153,7 +150,7 @@ while noExit:
     while scrape:
         # TODO: Add logic to scrape all elements in sequence
         urlIndex = int(input("What URL would you like to scrape?\n")) - 1
-        # TODO: Add print urls function (with numbers)
+        printUrlsWithPickleObject()
         # TODO: Put full scrape sequence in a function
         # the request to get the webpage's HTML content 
         urlArray = sampleurlItemNameDict.get(urlIndex)     
