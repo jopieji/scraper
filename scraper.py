@@ -23,7 +23,7 @@ headers = {"user-agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleW
 
 # initialize while loop conditions
 noExit = True
-scrape = False
+# scrape = False
 
 # base test URL
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
@@ -59,7 +59,7 @@ sampleurlItemNameDict = {
 
 
 def prompt():
-    appOption = int(input("\nWould you like to \n(1) scrape \n(2) add a url \n(3) delete a url \n(4) edit a limit price \n(5) View Current URLs\n(6) Exit\n\n"))
+    appOption = int(input("\nWould you like to \n(1) Scrape One URL \n(2) Scrape All URLs \n(3) Add a URL \n(4) Delete a URL \n(5) Edit a Limit Price\n(6) View Current URLs\n(7) Exit\n\n"))
     return appOption
 
 # pickle object storage for url dict
@@ -95,33 +95,72 @@ def pickleDataAdd(toStore):
     with open("urlArr.pickle", "wb") as f:
         pickle.dump(toStore, f) 
 
-# retrieves pickled array data to print options to choose from
-# might still need this on line 120
-"""
-def pickleDataRetreive():
-    with open("urlArr.pickle", "rb") as f:
-        arr_toPrint = pickle.load(f)
-    return arr_toPrint
-"""
 # function that prints the urls in a neat format
 # might need alter this to handle dictionary data so the URLs can be named by the end user; also include limit prices for each item
 def printUrls():
     for k, v in sampleurlItemNameDict.items():
         print(f"{k + 1}: {v[1]} Price: {v[2]}")
 
+# function that prints URLs using the pickle object rather than a local dictionary
 def printUrlsWithPickleObject():
     print()
     for key, val in pickleDictDataRetrieve().items():
         print(f"{key + 1}: {val[1]} Price: {val[2]}")
+    print()
 
+# function to delete an item from the pickle dictionary or URLs, names, and limit prices
 def deleteItem():
     printUrlsWithPickleObject()
     print()
     keyToRemove = int(input("What item do you want to delete? (use number):\n"))
-    update = pickleDictDataRetreive()
+    update = pickleDictDataRetrieve()
     update.pop(keyToRemove - 1)
     pickleDictDataAdd(update)
     print("Success! URL Removed")
+
+# function that scrapes all URLs in sequence
+def scrapeAll():
+    pass
+
+# function that triggers the scraping sequence
+def scrape():
+    # display URLs so user can select more easily
+    printUrlsWithPickleObject()
+    # ask for key / index to scrape
+    urlIndex = int(input("What URL would you like to scrape?\n")) - 1
+    # the request to get the webpage's HTML content 
+    urlArray = sampleurlItemNameDict.get(urlIndex)     
+    neweggReq = requests.get(urlArray[0], headers=headers)
+    # using bs4 to parse the html content
+    soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
+    # finding any dollar signs in the html (the first dollar sign more specifically)
+    findDollar = soupNewegg.find_all(text="$")
+    # find the parent div of the first dollar sign (usually the title dollar sign/price we see most prominently)
+    costParent = findDollar[0].parent
+    # picking out the text from the element we want to, in this case 'strong'
+    costTag = costParent.find("strong")
+    # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
+    print(f"\nDollar cost of {urlArray[1]}: ${costTag.string}")
+    if urlArray[2] > int(costTag.string):
+        print("Low price alert!")
+    else:
+        print("Price above threshold. Check back later!")
+    print("\n" + "="*55)
+
+# function with parameter than is passed in; allows for looping/scraping of all URLs in sequence
+def scrapeInd(urlIndex):
+    urlArray = sampleurlItemNameDict.get(urlIndex)     
+    neweggReq = requests.get(urlArray[0], headers=headers)
+    soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
+    findDollar = soupNewegg.find_all(text="$")
+    costParent = findDollar[0].parent
+    costTag = costParent.find("strong")
+    print(f"\nDollar cost of {urlArray[1]}: ${costTag.string}")
+    if urlArray[2] > int(costTag.string):
+        print("Low price alert!")
+    else:
+        print("Price above threshold. Check back later!")
+    print("\n" + "="*55)
 
     
 
@@ -131,48 +170,24 @@ while noExit:
     #pickleDictDataAdd(sampleurlItemNameDict)
     switch = prompt()
     if switch == 1:
-            scrape = True
+        scrape()
     elif switch == 2:
+        for key in pickleDictDataRetrieve().keys():
+            scrapeInd(key)
+    elif switch == 3:
         addDictItem()
         print("URL sucessfully added!")
-    elif switch == 3:
+    elif switch == 4:
         # TODO: "Add the logic here to print urls and delete by index"
         deleteItem()
-    elif switch == 4:
+    elif switch == 5:
         # TODO: "Similar logic to above, but able to change the limit price for notifications"
         break
-    elif switch == 5:
-        printUrlsWithPickleObject()
     elif switch == 6:
+        printUrlsWithPickleObject()
+    elif switch == 7:
         noExit = False
         break
-    # TODO: Maybe make this into a function that is called when (1) selected
-    while scrape:
-        # TODO: Add logic to scrape all elements in sequence
-        urlIndex = int(input("What URL would you like to scrape?\n")) - 1
-        printUrlsWithPickleObject()
-        # TODO: Put full scrape sequence in a function
-        # the request to get the webpage's HTML content 
-        urlArray = sampleurlItemNameDict.get(urlIndex)     
-        neweggReq = requests.get(urlArray[0], headers=headers)
-        # using bs4 to parse the html content
-        soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
-        # finding any dollar signs in the html (the first dollar sign more specifically)
-        findDollar = soupNewegg.find_all(text="$")
-        # find the parent div of the first dollar sign (usually the title dollar sign/price we see most prominently)
-        costParent = findDollar[0].parent
-        # picking out the text from the element we want to, in this case 'strong'
-        costTag = costParent.find("strong")
-        # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
-        print(f"\nDollar cost of {urlArray[1]}: ${costTag.string}")
-        if urlArray[2] > int(costTag.string):
-            print("Low price alert!")
-        else:
-            print("Price above threshold. Check back later!")
-        scrape = False
-        print("\n" + "="*55)
-
 
 # maybe add datetime to auto email/text
 # make sure to only send email/text when the price is below our threshold
-
