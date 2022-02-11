@@ -123,7 +123,11 @@ def deleteItem():
 
 # function that scrapes all URLs in sequence
 def scrapeAll():
-    pass
+    print("Scraping all URLs...")
+    for key in pickleDictDataRetrieve().keys():
+        scrapeInd(key)
+    print("\nDone!")
+    
 
 # function that triggers the scraping sequence
 def scrape():
@@ -175,8 +179,7 @@ while noExit:
     if switch == 1:
         scrape()
     elif switch == 2:
-        for key in pickleDictDataRetrieve().keys():
-            scrapeInd(key)
+        scrapeAll()
     elif switch == 3:
         addDictItem()
         print("URL sucessfully added!")
