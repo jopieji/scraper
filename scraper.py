@@ -65,7 +65,7 @@ def prompt():
 # pickle object storage for url dict
 def pickleDictDataAdd(dataToStore):
     with open("urlDict.pickle", "wb") as f:
-        pickle.dump(sampleurlItemNameDict, f)
+        pickle.dump(dataToStore, f)
 
 # function to add items to data dict
 def addDictItem():
@@ -77,9 +77,12 @@ def addDictItem():
     listToAdd.append(url)
     listToAdd.append(name)
     listToAdd.append(int(limitPrice))
-    sampleurlItemNameDict.update({index: listToAdd})
+    dictionary = pickleDictDataRetrieve()
+    print(dictionary)
+    dictionary.update({index: listToAdd})
+    print(dictionary)
     # might be inefficient
-    pickleDictDataAdd(sampleurlItemNameDict)
+    pickleDictDataAdd(dictionary)
 
 # retreive pickled dict data to print options to choose from and retrieve urls
 # no need for this right now; wasn't working to print
@@ -87,25 +90,12 @@ def addDictItem():
 def pickleDictDataRetrieve():
     with open("urlDict.pickle", "rb") as f:
         return pickle.load(f)
-    
-
-# pickle object storage for url array
-# maintains edits after user inputs and deletes items
-def pickleDataAdd(toStore):
-    with open("urlArr.pickle", "wb") as f:
-        pickle.dump(toStore, f) 
-
-# function that prints the urls in a neat format
-# might need alter this to handle dictionary data so the URLs can be named by the end user; also include limit prices for each item
-def printUrls():
-    for k, v in sampleurlItemNameDict.items():
-        print(f"{k + 1}: {v[1]} Price: {v[2]}")
 
 # function that prints URLs using the pickle object rather than a local dictionary
 def printUrlsWithPickleObject():
     print()
     for key, val in pickleDictDataRetrieve().items():
-        print(f"{key + 1}: {val[1]} // Current Limit Price: {val[2]}")
+        print(f"{key + 1}: {val[1]} // Current Limit Price: ${val[2]}")
     print()
 
 # function to delete an item from the pickle dictionary or URLs, names, and limit prices
@@ -130,8 +120,7 @@ def changeLimitPrice(key):
         return
     newLimit = int(input(f"What do you want to change the limit price to? Old limit: ${changeElement[2]}\n"))
     changeElement[2] = newLimit
-    dictionary.update({key: changeElement})
-    print(dictionary)
+    dictionary.update({key - 1: changeElement})
     pickleDictDataAdd(dictionary)
 
 # function that scrapes all URLs in sequence
@@ -149,7 +138,7 @@ def scrape():
     # ask for key / index to scrape
     urlIndex = int(input("What URL would you like to scrape?\n")) - 1
     # the request to get the webpage's HTML content 
-    urlArray = sampleurlItemNameDict.get(urlIndex)     
+    urlArray = pickleDictDataRetrieve().get(urlIndex)     
     neweggReq = requests.get(urlArray[0], headers=headers)
     # using bs4 to parse the html content
     soupNewegg = BeautifulSoup(neweggReq.content, "html.parser")
@@ -160,7 +149,7 @@ def scrape():
     # picking out the text from the element we want to, in this case 'strong'
     costTag = costParent.find("strong")
     # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
-    print(f"\nDollar cost of {urlArray[1]}: ${costTag.string}")
+    print(f"\nCost of {urlArray[1]}: ${costTag.string}")
     if urlArray[2] > int(costTag.string):
         print("Low price alert!")
     else:
