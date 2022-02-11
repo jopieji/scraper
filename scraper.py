@@ -105,7 +105,7 @@ def printUrls():
 def printUrlsWithPickleObject():
     print()
     for key, val in pickleDictDataRetrieve().items():
-        print(f"{key + 1}: {val[1]} Price: {val[2]}")
+        print(f"{key + 1}: {val[1]} // Current Limit Price: {val[2]}")
     print()
 
 # function to delete an item from the pickle dictionary or URLs, names, and limit prices
@@ -120,6 +120,19 @@ def deleteItem():
     update.pop(keyToRemove - 1)
     pickleDictDataAdd(update)
     print("Success! URL Removed")
+
+# function that changes the limit price for notifications to be sent
+def changeLimitPrice(key):
+    dictionary = pickleDictDataRetrieve()
+    changeElement = dictionary.get(key - 1, "n")
+    if changeElement == "n":
+        print("Error: index doesn't exist.")
+        return
+    newLimit = int(input(f"What do you want to change the limit price to? Old limit: ${changeElement[2]}\n"))
+    changeElement[2] = newLimit
+    dictionary.update({key: changeElement})
+    print(dictionary)
+    pickleDictDataAdd(dictionary)
 
 # function that scrapes all URLs in sequence
 def scrapeAll():
@@ -186,8 +199,12 @@ while noExit:
     elif switch == 4:
         deleteItem()
     elif switch == 5:
-        # TODO: "Similar logic to above, but able to change the limit price for notifications"
-        break
+        printUrlsWithPickleObject()
+        keyToChange = int(input("What URL do you want to edit? (use number or -1 to escape):\n"))
+        if keyToChange == -1:
+            continue
+        changeLimitPrice(keyToChange)
+        print("Limit price successfully changed!")
     elif switch == 6:
         printUrlsWithPickleObject()
     elif switch == 7:
