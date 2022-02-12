@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import pickle
+from config import TWILIO_AUTH, TWILIO_SID, MY_NUM, TWILIO_NUM
+from twilio.rest import Client
 
 # zillow, realtor.com, and redfin all block scrapers from looking into their site's html content
 # probably because they want ad revenue
@@ -11,7 +13,6 @@ import pickle
 
 # currently, my focus is making this app more user friendly. I will get a full MVP up before trying to implement a GUI
 
-KEY_URL = "https://iqunix.store/collections/f96/products/f96-coral-sea-wireless-mechanical-keyboard"
 """
 SAF_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15"
 EDGE_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.43'
@@ -23,31 +24,12 @@ headers = {"user-agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleW
 
 # initialize while loop conditions
 noExit = True
-# scrape = False
 
 # base test URL
 neweggURL = "https://www.newegg.com/arduino-a000066/p/N82E16813450001"
 
-# array of URLs
-# TODO: Maybe make this into a dictionary
-# have the indicies be the keys, then have a list of the name, limit price, and URL as the values
-# TODO: Use input checking to make sure the URLs are from Newegg
-neweggURLArray = [
-"https://www.newegg.com/arduino-a000066/p/N82E16813450001", 
-"https://www.newegg.com/g-skill-16gb-288-pin-ddr4-sdram/p/N82E16820231941",
-"https://www.newegg.com/p/2S7-01JX-00003",
-"https://www.newegg.com/p/3D0-002J-00045"
-]
-
-# dict of item names for print statement 
-# TODO: I am not storing this data/updating it when user adds new items/names/prices
-# TODO: Include Prices in this dictionary
-urlItemNameDict = {
-    0: "Arduino Base Unit",
-    1: "G-Skill RAM 16 GB",
-    2: "Arduino Mechanical Arm",
-    3: "MicroPython Board"
-}
+# set up Twilio Client
+client = Client(TWILIO_SID, TWILIO_AUTH)
 
 # need to phase this out. use pickle for everything for consistency
 sampleurlItemNameDict = {
@@ -56,7 +38,6 @@ sampleurlItemNameDict = {
     2: ["https://www.newegg.com/p/2S7-01JX-00003", "Arduino Mechanical Arm", 20], 
     3: ["https://www.newegg.com/p/3D0-002J-00045", "MicroPython Board", 15]
 }
-
 
 def prompt():
     appOption = int(input("\nWould you like to \n(1) Scrape One URL \n(2) Scrape All URLs \n(3) Add a URL \n(4) Delete a URL \n(5) Edit a Limit Price\n(6) View Current URLs\n(7) Exit\n\n"))
@@ -151,7 +132,9 @@ def scrape():
     # just printing the cost for now when we run the script // change this to send notifications if int(costTag) < limit
     print(f"\nCost of {urlArray[1]}: ${costTag.string}")
     if urlArray[2] > int(costTag.string):
-        print("Low price alert!")
+        print("Sending message...")
+        sendNotification(urlArray)
+        print("Message sent!")
     else:
         print("Price above threshold. Check back later!")
     print("\n" + "="*55)
@@ -170,6 +153,14 @@ def scrapeInd(urlIndex):
     else:
         print("Price above threshold. Check back later!")
     print("\n" + "="*55)
+
+def sendNotification(urlArr):
+    # TODO: Implement either SMTP or Twilio notification system for when prices are lower than set limits
+    message = client.messages.create(         
+                              to=MY_NUM,
+                              from_=TWILIO_NUM,
+                              body=f"{urlArr[1]} is on sale! Buy it now for {urlArr[2]} at {urlArr[0]}"
+                          ) 
 
     
 
