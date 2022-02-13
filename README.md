@@ -1,4 +1,3 @@
-# scraper
 # Web Scraper with Notification System
 ### Jake Opie
 
@@ -21,10 +20,11 @@ application using Newegg URLs. Newegg doesn't block web scrapers, and its many v
 so I felt it was the perfect site to check for price updates (especially given the state of chip inventory in 2022).
 
 ### Technology
-The technologies I used are Python, the pickle module, and the Twilio SMS API.
+The technologies I used are Python and the Twilio SMS API.
 
 ### Configuring this Application for Yourself
 First, start off by making a Twilio account. Once this is done, setup is extremely easy!
+https://www.twilio.com/
 
 There are only three environment variables you need to put in a config.py file on your system after you clone this
 repository. TWILIO_SID stores your Twilio SID, and TWILIO_AUTH stores your auth token. Make sure to keep these
@@ -32,6 +32,11 @@ private! Next, put your phone number (that you want notifications sent to) in a 
 lastly, your Twilio from phone number in TWILIO_NUM.
 
 Once this is all done, your app should work perfectly!
+
+---
+### Future Plans
+In the future, I'd like to add restock notifications. Graphics cards are at a premium right now, and getting text alerts for
+restocks can help out a lot of hobbyists and professionals to get the gear they need!
 
 ---
 
